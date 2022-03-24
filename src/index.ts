@@ -1,12 +1,34 @@
-import express from 'express';
+import fs from 'fs';
+import http from 'http';
+import https from 'https';
 
-const app = express();
-const port = 3000;
+import App from './app';
+import config from './config';
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
+const { app } = new App();
 
-app.listen(port, () => {
-    return console.log(`Express is listening at http://localhost:${port}`);
-});
+server().listen(config.port);
+
+function server() {
+    if (process.env.NODE_ENV === 'production') {
+        const privateKey = fs.readFileSync(
+            config.certDir + 'privkey.pem',
+            'utf8'
+        );
+
+        const certificate = fs.readFileSync(
+            config.certDir + 'fullchain.pem',
+            'utf8'
+        );
+
+        const credentials = {
+            key: privateKey,
+            cert: certificate,
+        };
+
+        return https.createServer(credentials, app);
+    }
+    else {
+        return http.createServer(app);
+    }
+}
