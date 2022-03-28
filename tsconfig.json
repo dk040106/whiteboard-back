@@ -8,7 +8,7 @@
         "esModuleInterop": true,
         "moduleResolution": "node",
         "sourceMap": true,
-        "forceConsistentCasingInFileNames": true
+        "forceConsistentCasingInFileNames": true,
     },
     "lib": ["es2015"]
 }

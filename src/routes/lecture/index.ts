@@ -5,31 +5,31 @@ export default createRouter([
     {
         method: 'get', // get all lectures
         path: '/',
-        auth: false,
-        handler: controllers.signin,
+        permission: {},
+        handler: controllers.find,
     },
     {
         method: 'get', // get all lectures of a user
         path: '/:userID',
-        auth: false,
-        handler: controllers.signin,
+        permission: {},
+        handler: controllers.find,
     },
     {
         method: 'post',
         path: '/create',
-        auth: false,
-        handler: controllers.signin,
+        permission: {},
+        handler: controllers.find,
     },
     {
         method: 'delete',
         path: '/:courseID',
-        auth: false,
-        handler: controllers.signin,
+        permission: {},
+        handler: controllers.find,
     },
     {
         method: 'put',
         path: '/:courseID',
-        auth: false,
-        handler: controllers.login,
+        permission: {},
+        handler: controllers.find,
     }
 ]);

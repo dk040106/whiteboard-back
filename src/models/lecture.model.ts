@@ -1,24 +1,24 @@
 import { Schema, model, Types } from 'mongoose';
 
-interface Post {
+interface IPost {
     title: string;
     body: string;
 }
 
-const postSchema = new Schema<Post>({
+const postSchema = new Schema<IPost>({
     title: { type: String, required: true },
     body: { type: String, required: true },
 });
 
-interface Lecture {
+interface ILecture {
     id: string;
     name: string;
     students: Types.ObjectId[],
     professor: Types.ObjectId,
-    posts: Post[],
+    posts: IPost[],
 }
 
-const courseSchema = new Schema<Lecture>({
+const lectureSchema = new Schema<ILecture>({
     id: { type: String, required: true },
     name: { type: String, required: true },
     students: [{ type: Schema.Types.ObjectId, ref: 'User' }],
@@ -26,6 +26,4 @@ const courseSchema = new Schema<Lecture>({
     posts: [{ type: postSchema, required: true }],
 });
 
-const CourseModel = model('Lecture', courseSchema);
-
-export { CourseModel };
+export const Lecture = model('Lecture', lectureSchema);
