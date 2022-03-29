@@ -20,9 +20,15 @@ export default createRouter([
     },
     {
         method: 'get', // get all lectures of a user
-        path: '/user/:userId',
+        path: '/user',
         permission: {},
         handler: controllers.lectureOfUser,
+    },
+    {
+        method: 'get', // get all lectures of a user
+        path: '/user/post',
+        permission: {},
+        handler: controllers.postOfUser,
     },
     {
         method: 'get',
@@ -41,7 +47,7 @@ export default createRouter([
     },
     {
         method: 'post',
-        path: '/lecture/:lectureId/student',
+        path: '/:lectureId/student',
         permission: {
             userTypes: ['P'],
             inLecture: true
@@ -50,7 +56,7 @@ export default createRouter([
     },
     {
         method: 'delete',
-        path: '/lecture/:lectureId/student/:stduentId',
+        path: '/:lectureId/student/:stduentId',
         permission: {
             userTypes: ['P'],
             inLecture: true
@@ -59,7 +65,7 @@ export default createRouter([
     },
     {
         method: 'get',
-        path: '/lecture/:lectureId/post',
+        path: '/:lectureId/post',
         permission: {
             inLecture: true
         },
@@ -67,7 +73,7 @@ export default createRouter([
     },
     {
         method: 'post',
-        path: '/lecture/:lectureId/post',
+        path: '/:lectureId/post',
         permission: {
             userTypes: ['P'],
             inLecture: true
@@ -76,7 +82,7 @@ export default createRouter([
     },
     {
         method: 'get',
-        path: '/lecture/:lectureId/post/:postID',
+        path: '/:lectureId/post/:postID',
         permission: {
             inLecture: true
         },

@@ -23,17 +23,17 @@ export default function checkPermission(route: IRoute) {
 
             if (permission.inLecture !== undefined) {
                 console.log(req.params.lectureId);
-
+                
                 const lecture = await Lecture.findById(req.params.lectureId);
                 if (!lecture) throw new HttpError(404,'No lecture found');
-
+                
                 if (permission.inLecture) {
-                    if (!lecture.students.includes(userId) && lecture.professor !== userId) {
+                    if (!(lecture.students.includes(userId) || lecture.professor.toString() === userId)) {
                         throw new HttpError(502,'User not enrolled or not a professor of this course');
                     }
                 }
                 else {
-                    if (lecture.students.includes(userId) || lecture.professor === userId) {
+                    if (lecture.students.includes(userId) || lecture.professor.toString() === userId) {
                         throw new HttpError(502, 'Student already enrolled or a professor of this course');
                     }
                 }

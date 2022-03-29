@@ -1,23 +1,24 @@
 import { Schema, model, Types } from 'mongoose';
 
 export interface IPost {
-    id: string;
+    postId: string;
     title: string;
     body: string;
     createdAt: Date;
 }
 
 export function generatePostId(title: string): string {
+    const now = new Date();
     return [
-        Date.prototype.getFullYear(), 
-        Date.prototype.getMonth() + 1,
-        Date.prototype.getDate(),
+        now.getFullYear(), 
+        now.getMonth() + 1,
+        now.getDate(),
         ...title.split(' ').slice(0, 3)
     ].join('-');
 }
 
 const postSchema = new Schema<IPost>({
-    id: { type: String, required: true, unique: true },
+    postId: { type: String, required: true },
     title: { type: String, required: true },
     body: { type: String, required: true },
     createdAt: { type: Date, required: true },
