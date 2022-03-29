@@ -3,34 +3,48 @@ import jwt from 'jsonwebtoken';
 
 import { Lecture } from '../models/lecture.model';
 import config from '../config';
-import { IRoute } from '../types';
+import { HttpError, IRoute } from '../types';
 
 export default function checkPermission(route: IRoute) {
     return async (req: Request, res: Response, next: NextFunction) => {
-        const { permission } = route;
-        if (!permission) return next();
-        if(!req.token) throw new Error('Token not passed from client');
+        try {
+            console.log("Check Permission");
 
-        const { userID, userType }: any = jwt.verify(req.token, config.jwtSecret);
-        
-        if(permission.userTypes && !permission.userTypes.includes(userType)) {
-            throw new Error('Not accessible to the user');
-        }
+            const { permission } = route;
+            if (!permission) return next();
 
-        if(permission.lectureID) {
-            const lecture = await Lecture.findById(permission.lectureID);
-            if(!lecture) throw new Error('No lecture found');
-            // if student -> not included in lecture or
-            // professor -> not professor of the lecture
-            if(
-                (userType === 'S' && !lecture.students.includes(userID)) || 
-                (userType === 'P' && lecture.professor !== userID)
-            ) {
-                throw new Error('User not enrolled or not a professor of this course');
+            if (!req.token) throw new HttpError(401, 'Token not passed from client');
+
+            const { userId, userType }: any = jwt.verify(req.token, config.jwtSecret);
+
+            if (permission.userTypes !== undefined && !permission.userTypes.includes(userType)) {
+                throw new HttpError(403, 'Not accessible to the user');
             }
-        }
 
-        req.auth = { userID, userType };
-        return next();
+            if (permission.inLecture !== undefined) {
+                console.log(req.params.lectureId);
+
+                const lecture = await Lecture.findOne({ lectureId: req.params.lectureId });
+                if (!lecture) throw new HttpError(404,'No lecture found');
+
+                if (permission.inLecture) {
+                    if (!lecture.students.includes(userId) && lecture.professor !== userId) {
+                        throw new HttpError(502,'User not enrolled or not a professor of this course');
+                    }
+                }
+                else {
+                    if (lecture.students.includes(userId) || lecture.professor === userId) {
+                        throw new HttpError(502, 'Student already enrolled or a professor of this course');
+                    }
+                }
+            }
+
+            // Passed all checks
+            req.auth = { userId, userType };
+
+            return next();
+        } catch (err) {
+            next(err);
+        }
     }
 }

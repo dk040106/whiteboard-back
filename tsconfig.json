@@ -1,8 +1,9 @@
 {
     "compilerOptions": {
+        "lib": ["es2015"],
         "target": "es6",
         "module": "commonjs",
-        "outDir": "./dist",
+        "outDir": "dist",
         "rootDir": "./src",
         "strict": true,
         "esModuleInterop": true,
@@ -10,5 +11,5 @@
         "sourceMap": true,
         "forceConsistentCasingInFileNames": true,
     },
-    "lib": ["es2015"]
+    "include": ["src/**/*"],
 }

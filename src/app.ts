@@ -34,10 +34,11 @@ class App {
         this.app.use(helmet());
         this.app.use(express.json());
         this.app.use(bearerToken({
+            headerKey: 'Bearer',
             cookie: {
                 signed: true,
                 secret: config.cookieSecret,
-                key: 'jwt',
+                key: 'token',
             },
             reqKey: 'token',
         }));

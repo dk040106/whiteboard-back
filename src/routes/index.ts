@@ -8,7 +8,7 @@ export const createRouter = (routes: IRoute[]): Router => {
     routes.forEach(route => {
         router[route.method](
             route.path,
-            ...route.permission ? [checkPermission] : [],
+            ...(route.permission ? [checkPermission(route)] : []),
             route.handler,
         );
     });

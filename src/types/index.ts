@@ -5,7 +5,7 @@ type EnumUserType = 'S' | 'P';
 
 export interface IPermission {
     userTypes?: EnumUserType[];
-    lectureID?: string;
+    inLecture?: boolean;
 }
 
 export interface IRoute {
@@ -16,7 +16,7 @@ export interface IRoute {
 }
 
 export interface IAuth {
-    userID: string,
+    userId: string,
     userType: EnumUserType
 }
 
