@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 
+import cors from "cors";
 import helmet from "helmet";
 import bearerToken from "express-bearer-token";
 
@@ -31,6 +32,7 @@ class App {
     }
 
     private useMiddlewares() {
+        this.app.use(cors());
         this.app.use(helmet());
         this.app.use(express.json());
         this.app.use(bearerToken({
