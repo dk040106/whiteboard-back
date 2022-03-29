@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
-import { Lecture } from '../models/lecture.model';
 import config from '../config';
+import { Lecture } from '../models';
 import { HttpError, IRoute } from '../types';
 
 export default function checkPermission(route: IRoute) {
@@ -24,7 +24,7 @@ export default function checkPermission(route: IRoute) {
             if (permission.inLecture !== undefined) {
                 console.log(req.params.lectureId);
 
-                const lecture = await Lecture.findOne({ lectureId: req.params.lectureId });
+                const lecture = await Lecture.findById(req.params.lectureId);
                 if (!lecture) throw new HttpError(404,'No lecture found');
 
                 if (permission.inLecture) {

@@ -12,6 +12,26 @@ export default createRouter([
     },
     {
         method: 'post',
+        path: '/',
+        permission: {
+            userTypes: ['P'],
+        },
+        handler: controllers.createLecture,
+    },
+    {
+        method: 'get', // get all lectures of a user
+        path: '/user/:userId',
+        permission: {},
+        handler: controllers.lectureOfUser,
+    },
+    {
+        method: 'get',
+        path: '/:lectureId',
+        permission: {},
+        handler: controllers.getLecture,
+    },
+    {
+        method: 'post', // enroll to this lecture
         path: '/:lectureId/enroll',
         permission: {
             userTypes: ['S'],
@@ -20,17 +40,46 @@ export default createRouter([
         handler: controllers.enrollLecture
     },
     {
-        method: 'get', // get all lectures of a user
-        path: '/:userId',
-        permission: {},
-        handler: controllers.userLecture,
+        method: 'post',
+        path: '/lecture/:lectureId/student',
+        permission: {
+            userTypes: ['P'],
+            inLecture: true
+        },
+        handler: controllers.allStudent
+    },
+    {
+        method: 'delete',
+        path: '/lecture/:lectureId/student/:stduentId',
+        permission: {
+            userTypes: ['P'],
+            inLecture: true
+        },
+        handler: controllers.deleteStudent
+    },
+    {
+        method: 'get',
+        path: '/lecture/:lectureId/post',
+        permission: {
+            inLecture: true
+        },
+        handler: controllers.allPost
     },
     {
         method: 'post',
-        path: '/',
+        path: '/lecture/:lectureId/post',
         permission: {
             userTypes: ['P'],
+            inLecture: true
         },
-        handler: controllers.createLecture,
-    }
+        handler: controllers.createPost
+    },
+    {
+        method: 'get',
+        path: '/lecture/:lectureId/post/:postID',
+        permission: {
+            inLecture: true
+        },
+        handler: controllers.getPost
+    },
 ]);

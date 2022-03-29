@@ -1,19 +1,19 @@
 import { NextFunction, Request, Response } from 'express';
-import { User } from '../../models/user.model';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+
 import config from '../../config';
+import { User } from '../../models';
 import { HttpError } from '../../types';
 
 export function signup(req: Request, res: Response, next: NextFunction) {
     const hash = bcrypt.hashSync(req.body.user.password, 10);
-    const newUser = new User({
+
+    User.create({
         ...req.body.user,
         password: hash,
-    });
-
-    newUser.save((err, user) => {
-        if (err) return next(err);
+    }).then(user => {
+        if (!user) next(new Error("User not created"));
         res.status(201).json({ message: "User Created" });
     });
 }
@@ -23,7 +23,7 @@ export function login(req: Request, res: Response, next: NextFunction) {
 
     User.findOne({ username })
         .then(user => {
-            if (!user) throw new HttpError(404, "Username Incorrect");
+            if (!user) throw new HttpError(404, "User ID Incorrect");
             if (!bcrypt.compareSync(password, user.password)) {
                 throw new HttpError(401, "Password Incorrect");
             }
