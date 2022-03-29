@@ -3,11 +3,13 @@ import { Schema, model, Types } from 'mongoose';
 interface IPost {
     title: string;
     body: string;
+    createdAt: Date;
 }
 
 const postSchema = new Schema<IPost>({
     title: { type: String, required: true },
     body: { type: String, required: true },
+    createdAt: { type: Date, required: true },
 });
 
 interface ILecture {
