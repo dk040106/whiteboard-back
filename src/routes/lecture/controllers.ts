@@ -144,15 +144,16 @@ export async function createPost(req: Request, res: Response, next: NextFunction
     try {
         const { lectureId } = req.params;
 
-        const lectures = await Lecture.findById(lectureId).exec();
-        if (!lectures) throw new HttpError(404, "Lecture not found");
+        const lecture = await Lecture.findById(lectureId).exec();
+        if (!lecture) throw new HttpError(404, "Lecture not found");
 
         const newPostId = generatePostId(req.body.post.title);
-        const newPostIdCnt = lectures.posts.filter(post => post.postId.startsWith(newPostId)).length;
+        const newPostIdCnt = lecture.posts.filter(post => post.postId.startsWith(newPostId)).length;
 
         const newPost = {
             ...req.body.post,
             postId: `${newPostId}-${newPostIdCnt}`,
+            lectureCode: lecture.code,
             createdAt: new Date(Date.now())
         };
 

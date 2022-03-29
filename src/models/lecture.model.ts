@@ -2,6 +2,7 @@ import { Schema, model, Types } from 'mongoose';
 
 export interface IPost {
     postId: string;
+    lectureCode: string;
     title: string;
     body: string;
     createdAt: Date;
@@ -19,13 +20,14 @@ export function generatePostId(title: string): string {
 
 const postSchema = new Schema<IPost>({
     postId: { type: String, required: true },
+    lectureCode: { type: String, required: true },
     title: { type: String, required: true },
     body: { type: String, required: true },
     createdAt: { type: Date, required: true },
 });
 
 export interface ILecture {
-    lectureId: string;
+    code: string;
     name: string;
     students: Types.ObjectId[],
     professor: Types.ObjectId,
@@ -33,7 +35,7 @@ export interface ILecture {
 }
 
 const lectureSchema = new Schema<ILecture>({
-    lectureId: { type: String, required: true, unique: true },
+    code: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     students: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     professor: {
