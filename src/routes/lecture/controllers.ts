@@ -72,6 +72,7 @@ export async function postOfUser(req: Request, res: Response, next: NextFunction
 
         const lectures = await Lecture.find({ _id: { $in: user.lectures } });
         const posts = ([] as IPost[]).concat(...lectures.map(lecture => lecture.posts));
+        posts.sort((p1, p2) => p2.createdAt.getTime() - p1.createdAt.getTime());
 
         res.status(200).json({ posts });
 
