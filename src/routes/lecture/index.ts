@@ -40,7 +40,7 @@ export default createRouter([
         handler: controllers.enrollLecture
     },
     {
-        method: 'post',
+        method: 'get',
         path: '/lecture/:lectureId/student',
         permission: {
             userTypes: ['P'],
