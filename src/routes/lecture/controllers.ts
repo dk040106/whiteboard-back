@@ -24,7 +24,7 @@ export function allLecture(req: Request, res: Response, next: NextFunction) {
 
 // all post of lecture
 export function allPost(req: Request, res: Response, next: NextFunction) {
-    Lecture.findOne({ code: req.params.lectureCode })
+    Lecture.findById(req.params.lectureId)
         .exec((err, lecture) => {
             if (err) return next(err);
             if (!lecture) return next(new Error("Lecture not found"));

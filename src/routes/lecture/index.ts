@@ -65,7 +65,7 @@ export default createRouter([
     },
     {
         method: 'get',
-        path: '/:lectureCode/post',
+        path: '/:lectureId/post',
         permission: {
             inLecture: true
         },
