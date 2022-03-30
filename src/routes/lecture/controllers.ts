@@ -123,14 +123,14 @@ export async function enrollLecture(req: Request, res: Response, next: NextFunct
 }
 
 export async function deleteStudent(req: Request, res: Response, next: NextFunction) {
-    const { lectureId, studentId: userId } = req.params;
+    const { lectureId, studentId } = req.params;
 
     console.log(lectureId);
-    console.log(userId);
+    console.log(studentId);
 
     try {
-        await Lecture.findByIdAndUpdate(lectureId, { $pull: { students: userId } }).exec();
-        await User.findByIdAndUpdate(userId, { $pull: { lectures: lectureId } }).exec();
+        await Lecture.findByIdAndUpdate(lectureId, { $pullAll: { students: [{ _id: studentId }] } }).exec();
+        await User.findByIdAndUpdate(studentId, { $pullAll: { lectures: [{ _id: lectureId }] } }).exec();
 
         res.status(201).json({
             message: "Unenrolled from lecture",

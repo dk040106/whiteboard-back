@@ -1,5 +1,5 @@
 # Whiteboard
-Online lecture platform, similar to Blackboard.
+[Whiteboard](https://whiteboard.jungwoong.kim) is an online lecture platform, similar to Blackboard.
 
 ## Tech Stack
 | Stack     | Name      |
