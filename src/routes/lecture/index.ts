@@ -56,7 +56,7 @@ export default createRouter([
     },
     {
         method: 'delete',
-        path: '/:lectureId/student/:stduentId',
+        path: '/:lectureId/student/:studentId',
         permission: {
             userTypes: ['P'],
             inLecture: true
