@@ -10,12 +10,14 @@ export function signup(req: Request, res: Response, next: NextFunction) {
     const hash = bcrypt.hashSync(req.body.user.password, 10);
 
     User.create({
-        ...req.body.user,
-        password: hash,
-    }).then(user => {
-        if (!user) next(new Error("User not created"));
-        res.status(201).json({ message: "User Created" });
-    });
+            ...req.body.user,
+            password: hash,
+        })
+        .then(user => {
+            if (!user) throw new HttpError(500, "User not created");
+            res.status(201).json({ message: "User Created" });
+        })
+        .catch(err => next(err));
 }
 
 export function login(req: Request, res: Response, next: NextFunction) {

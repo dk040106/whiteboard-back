@@ -8,6 +8,7 @@ export default async function errorHandler(
     res: Response,
     next: NextFunction
 ) {
+    console.log("Error Caught");
     if (err instanceof HttpError) {
         const { status = 500, message } = err as HttpError;
         res.status(status).json({ message });

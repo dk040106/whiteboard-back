@@ -72,6 +72,7 @@ export async function postOfUser(req: Request, res: Response, next: NextFunction
 
         const lectures = await Lecture.find({ _id: { $in: user.lectures } });
         const posts = ([] as IPost[]).concat(...lectures.map(lecture => lecture.posts));
+
         res.status(200).json({ posts });
 
     } catch (err) {
@@ -82,18 +83,22 @@ export async function postOfUser(req: Request, res: Response, next: NextFunction
 export function createLecture(req: Request, res: Response, next: NextFunction) {
     const { userId } = req.auth as IAuth;
 
-    Lecture.create({
-        ...req.body.lecture,
-        professor: userId
-    }).then(lecture => {
-        if (!lecture) next(new HttpError(501, "Lecture not created"));
+    Lecture
+        .create({
+            ...req.body.lecture,
+            professor: userId
+        })
+        .then(lecture => {
+            if (!lecture) throw new HttpError(501, "Lecture not created");
 
-        return User.findByIdAndUpdate(userId, { $push: { lectures: lecture._id } }).exec();
-    }).then(user => {
-        if (!user) next(new HttpError(501, "User not updated"));
+            return User.findByIdAndUpdate(userId, { $push: { lectures: lecture._id } }).exec();
+        })
+        .then(user => {
+            if (!user) throw new HttpError(501, "User not updated");
 
-        res.status(201).json({ message: "Lecture created" });
-    })
+            res.status(201).json({ message: "Lecture created" });
+        })
+        .catch(err => next(err));
 }
 
 export async function enrollLecture(req: Request, res: Response, next: NextFunction) {
@@ -123,8 +128,8 @@ export async function deleteStudent(req: Request, res: Response, next: NextFunct
     console.log(userId);
 
     try {
-        await Lecture.findByIdAndUpdate(lectureId, { $pull: { students: userId } });
-        await User.findByIdAndUpdate(userId, { $pull: { lectures: lectureId } });
+        await Lecture.findByIdAndUpdate(lectureId, { $pull: { students: userId } }).exec();
+        await User.findByIdAndUpdate(userId, { $pull: { lectures: lectureId } }).exec();
 
         res.status(201).json({
             message: "Unenrolled from lecture",
@@ -139,23 +144,27 @@ export async function createPost(req: Request, res: Response, next: NextFunction
     try {
         const { lectureId } = req.params;
 
-        const lectures = await Lecture.findById(lectureId).exec();
-        if (!lectures) throw new HttpError(404, "Lecture not found");
+        const lecture = await Lecture.findById(lectureId).exec();
+        if (!lecture) throw new HttpError(404, "Lecture not found");
 
         const newPostId = generatePostId(req.body.post.title);
-        const newPostIdCnt = lectures.posts.filter(post => post.id.startsWith(newPostId)).length;
+        const newPostIdCnt = lecture.posts.filter(post => post.postId.startsWith(newPostId)).length;
 
         const newPost = {
             ...req.body.post,
             postId: `${newPostId}-${newPostIdCnt}`,
-            createdAt: Date.now
+            lectureCode: lecture.code,
+            createdAt: new Date(Date.now())
         };
 
-        Lecture.findByIdAndUpdate(lectureId, { $push: { posts: newPost } });
-
-        res.status(201).json({
-            message: "Created Post"
-        });
+        Lecture
+            .findByIdAndUpdate(lectureId, { $push: { posts: newPost } })
+            .exec((err, lecture) => {
+                if (err) throw err;
+                res.status(201).json({
+                    message: "Created Post"
+                });
+            });
     }
     catch (err) {
         next(err);
@@ -170,7 +179,7 @@ export function getPost(req: Request, res: Response, next: NextFunction) {
         .exec((err, lecture) => {
             if (err) return next(err);
             if (!lecture) return next(new HttpError(404, "Post not found"));
-            const post = lecture.posts.find(post => post.id === postId);
+            const post = lecture.posts.find(post => post.postId === postId);
             res.status(200).json({ post });
         });
 }
